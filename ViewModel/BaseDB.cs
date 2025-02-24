@@ -7,12 +7,14 @@ namespace ViewModel
 {
     public abstract class BaseDB
     {
-          protected static string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="
-                        + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
-                        + "/../../../../../VViewModel/ExampleProjectBagrutGrades.accdb");
+        protected static string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\nirgo\\source\\repos\\Model\\ViewModel\\ExampleProject.accdb";
+        
+        
+        //protected static string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="
+          //              + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
+          //              + "/../../../../../VViewModel/ExampleProjectBagrutGrades.accdb");
 
 
-            //C:\Users\nativ\Downloads\Exampl_Project\MyWhatApp\VViewModel\ExampleProjectBagrutGrades.accdb
             protected static OleDbConnection connection;
             protected OleDbCommand command;
             protected OleDbDataReader reader;
@@ -48,9 +50,7 @@ namespace ViewModel
             public abstract BaseEntity NewEntity();
 
 
-            //C:\Users\nativ\Downloads\Exampl_Project\MyWhatApp\VViewModel\ExampleProjectBagrutGrades.accdb
-
-
+          
             protected List<BaseEntity> Select()
             {
                 List<BaseEntity> list = new List<BaseEntity>();
