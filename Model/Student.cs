@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    class Student
+    public class Student:Person
     {
+        private string tel;
+
+        public string Tel { get => tel; set => tel = value; }
     }
 }
