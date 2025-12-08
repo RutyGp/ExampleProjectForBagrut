@@ -39,41 +39,44 @@ namespace ViewModel
             return g;
         }
 
-        //שלב ב
-        //protected override void CreateDeletedSQL(BaseEntity entity, OleDbCommand cmd)
-        //{
-        //    City c = entity as City;
-        //    if (c != null)
-        //    {
-        //        string sqlStr = $"DELETE FROM CityTbl where id=@pid";
+       
+        protected override void CreateDeletedSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            City c = entity as City;
+            if (c != null)
+            {
+                string sqlStr = $"DELETE FROM CityTbl where id=@pid";
 
-        //        command.CommandText = sqlStr;
-        //        command.Parameters.Add(new OleDbParameter("@pid", c.Id));
-        //    }
-        //}
-        //protected override void CreateInsertdSQL(BaseEntity entity, OleDbCommand cmd)
-        //{
-        //    City c = entity as City;
-        //    if (c != null)
-        //    {
-        //        string sqlStr = $"Insert INTO  CityTbl (CityName) VALUES (@cName)";
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@pid", c.Id));
+            }
+        }
+        protected override void CreateInsertdSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            City c = entity as City;
+            if (c != null)
+            {
+                string sqlStr = $"Insert INTO  CityTbl (CityName) VALUES (@cName)";
 
-        //        command.CommandText = sqlStr;
-        //        command.Parameters.Add(new OleDbParameter("@cName", c.CityName));
-        //    }
-        //}
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@cName", c.CityName));
+            }
+        }
 
-        //protected override void CreateUpdatedSQL(BaseEntity entity, OleDbCommand cmd)
-        //{
-        //    City c = entity as City;
-        //    if (c != null)
-        //    {
-        //        string sqlStr = $"UPDATE CityTbl  SET CityName=@cName WHERE ID=@id";
+      
 
-        //        command.CommandText = sqlStr;
-        //        command.Parameters.Add(new OleDbParameter("@cName", c.CityName));
-        //        command.Parameters.Add(new OleDbParameter("@id", c.Id));
-        //    }
-        //}
+
+        protected override void CreateUpdatedSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            City c = entity as City;
+            if (c != null)
+            {
+                string sqlStr = $"UPDATE CityTbl  SET CityName=@cName WHERE ID=@id";
+
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@cName", c.CityName));
+                command.Parameters.Add(new OleDbParameter("@id", c.Id));
+            }
+        }
     }
 }

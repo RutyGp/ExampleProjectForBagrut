@@ -1,6 +1,7 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,35 +45,50 @@ namespace ViewModel
         //    Person c = entity as Person;
         //    if (c != null)
         //    {
-        //        string sqlStr = $"DELETE FROM PersonTbl where id=@pid";
 
         //        command.CommandText = sqlStr;
         //        command.Parameters.Add(new OleDbParameter("@pid", c.Id));
         //    }
         //}
-        //protected override void CreateInsertdSQL(BaseEntity entity, OleDbCommand cmd)
-        //{
-        //    Person c = entity as Person;
-        //    if (c != null)
-        //    {
-        //        string sqlStr = $"Insert INTO  PersonTbl (PersonName) VALUES (@cName)";
+        protected override void CreateInsertdSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            Person c = entity as Person;
+            if (c != null)
+            {
+                string sqlStr = $"Insert INTO  PersonTbl (FirstName,LastName,CityCode) VALUES (@fName,@lName,@cCode)";
 
-        //        command.CommandText = sqlStr;
-        //        command.Parameters.Add(new OleDbParameter("@cName", c.PersonName));
-        //    }
-        //}
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@fName", c.FirstName));
+                command.Parameters.Add(new OleDbParameter("@lName", c.LastName));
+                command.Parameters.Add(new OleDbParameter("@cCode", c.LivingCity.Id));
+            }
+        }
 
-        //protected override void CreateUpdatedSQL(BaseEntity entity, OleDbCommand cmd)
-        //{
-        //    Person c = entity as Person;
-        //    if (c != null)
-        //    {
-        //        string sqlStr = $"UPDATE PersonTbl  SET PersonName=@cName WHERE ID=@id";
+        protected override void CreateUpdatedSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            Person c = entity as Person;
+            if (c != null)
+            {
+                string sqlStr = $"UPDATE PersonTbl  SET FirstName=@fName,LastName=@lName,CityCode=@cCode WHERE ID=@id";
 
-        //        command.CommandText = sqlStr;
-        //        command.Parameters.Add(new OleDbParameter("@cName", c.PersonName));
-        //        command.Parameters.Add(new OleDbParameter("@id", c.Id));
-        //    }
-        //}
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@fName", c.FirstName));
+                command.Parameters.Add(new OleDbParameter("@lName", c.LastName));
+                command.Parameters.Add(new OleDbParameter("@cCode", c.LivingCity.Id));
+                command.Parameters.Add(new OleDbParameter("@id", c.Id));
+            }
+        }
+
+        protected override void CreateDeletedSQL(BaseEntity entity, OleDbCommand cmd)
+        {
+            Person c = entity as Person;
+            if (c != null)
+            {
+                string sqlStr = $"DELETE FROM PersonTbl WHERE ID=@id";
+
+                command.CommandText = sqlStr;
+                command.Parameters.Add(new OleDbParameter("@id", c.Id));
+            }
+        }
     }
 }
