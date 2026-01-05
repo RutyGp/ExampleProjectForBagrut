@@ -8,121 +8,91 @@ namespace ViewModel
     public abstract class BaseDB
     {
         protected static string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\nirgo\\source\\repos\\Model\\ViewModel\\ExampleProject.accdb";
-        
-        
+
+
         //protected static string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="
-          //              + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
-          //              + "/../../../../../VViewModel/ExampleProjectBagrutGrades.accdb");
+        //              + System.IO.Path.GetFullPath(System.Reflection.Assembly.GetExecutingAssembly().Location
+        //              + "/../../../../../VViewModel/ExampleProjectBagrutGrades.accdb");
 
 
-            protected static OleDbConnection connection;
-            protected OleDbCommand command;
-            protected OleDbDataReader reader;
-            public static string Path()
+        protected static OleDbConnection connection;
+        protected OleDbCommand command;
+        protected OleDbDataReader reader;
+        ////public static string Path()
+        ////{
+        ////    String[] args = Environment.GetCommandLineArgs();
+        ////    string s;
+        ////    if (args.Length == 1)
+        ////    {
+        ////        s = args[0];
+        ////    }
+        ////    else
+        ////    {
+        ////        s = args[1];
+        ////        s = s.Replace("/service:", "");
+        ////    }
+        ////    string[] st = s.Split('\\');
+        ////    int x = st.Length - 6;
+        ////    st[x] = "VViewModel";
+        ////    Array.Resize(ref st, x + 1);
+        ////    string str = String.Join('\\', st);
+        ////    return str;
+        ////}
+        public BaseDB()
+        {
+
+            connection ??= new OleDbConnection(connectionString);
+            command = new OleDbCommand();
+            command.Connection = connection;
+        }
+
+        public abstract BaseEntity NewEntity();
+
+
+
+        protected List<BaseEntity> Select()
+        {
+            List<BaseEntity> list = new List<BaseEntity>();
+            try
             {
-                String[] args = Environment.GetCommandLineArgs();
-                string s;
-                if (args.Length == 1)
-                {
-                    s = args[0];
-                }
-                else
-                {
-                    s = args[1];
-                    s = s.Replace("/service:", "");
-                }
-                string[] st = s.Split('\\');
-                int x = st.Length - 6;
-                st[x] = "VViewModel";
-                Array.Resize(ref st, x + 1);
-                string str = String.Join('\\', st);
-                return str;
-            }
-            //C:\Users\nativ\Downloads\Exampl_Project\MyWhatApp\VViewModel\ExampleProjectBagrutGrades.accdb
-            public BaseDB()
-            {
-                var x = Path();
-                connection ??= new OleDbConnection(connectionString);
-                command = new OleDbCommand();
                 command.Connection = connection;
-            }
-
-            public abstract BaseEntity NewEntity();
-
-
-          
-            protected List<BaseEntity> Select()
-            {
-                List<BaseEntity> list = new List<BaseEntity>();
-                try
+                if (connection.State != ConnectionState.Open)
                 {
-                    command.Connection = connection;
-                    if (connection.State != ConnectionState.Open)
-                    {
-                        connection.Open();
-                    }
-
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        BaseEntity entity = NewEntity();
-                        list.Add(CreateModel(entity));
-                    }
-                }
-                catch (Exception e)
-                {
-
-                    System.Diagnostics.Debug.WriteLine(
-                        e.Message + "\nSQL:" + command.CommandText);
-                }
-                finally
-                {
-                    if (reader != null) reader.Close();
-                    //   if (connection.State == ConnectionState.Open) connection.Close();
-                }
-                return list;
-            }
-
-            protected async Task<List<BaseEntity>> SelectAsync(string sqlStr)
-            {
-                OleDbConnection connection = new OleDbConnection();
-                OleDbCommand command = new OleDbCommand();
-                List<BaseEntity> list = new List<BaseEntity>();
-
-                try
-                {
-                    command.Connection = connection;
-                    command.CommandText = sqlStr;
                     connection.Open();
-                    this.reader = (OleDbDataReader)await command.ExecuteReaderAsync();
+                }
 
+                reader = command.ExecuteReader();
 
-                    while (reader.Read())
-                    {
-                        BaseEntity entity = NewEntity();
-                        list.Add(CreateModel(entity));
-                    }
-                }
-                catch (Exception e)
+                while (reader.Read())
                 {
-                    System.Diagnostics.Debug.WriteLine(e.Message + "\nSQL:" + command.CommandText);
+                    BaseEntity entity = NewEntity();
+                    list.Add(CreateModel(entity));
                 }
-                finally
-                {
-                    if (reader != null) reader.Close();
-                    if (connection.State == ConnectionState.Open) connection.Close();
-                }
-                return list;
             }
-
-
-            protected virtual BaseEntity CreateModel(BaseEntity entity)
+            catch (Exception e)
             {
-                entity.Id = (int)reader["id"];
-                return entity;
-            }
 
+                System.Diagnostics.Debug.WriteLine(
+                    e.Message + "\nSQL:" + command.CommandText);
+            }
+            finally
+            {
+                if (reader != null) reader.Close();
+                //   if (connection.State == ConnectionState.Open) connection.Close();
+            }
+            return list;
+        }
+
+
+
+        protected virtual BaseEntity CreateModel(BaseEntity entity)
+        {
+            entity.Id = (int)reader["id"];
+            return entity;
+        }
+
+
+        // Insert, Update, Delete
         protected abstract void CreateDeletedSQL(BaseEntity entity, OleDbCommand cmd);
         public static List<ChangeEntity> deleted = new List<ChangeEntity>();
 
@@ -214,7 +184,7 @@ namespace ViewModel
             catch (Exception ex)
             {
                 trans.Rollback();
-                System.Diagnostics.Debug.WriteLine(ex.Message + "\n SQL:" + command.CommandText);
+                throw new Exception(ex.Message + "\n SQL:" + command.CommandText);
             }
             finally
             {
@@ -232,4 +202,4 @@ namespace ViewModel
         }
 
     }
-    }
+}
